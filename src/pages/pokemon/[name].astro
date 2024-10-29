@@ -1,0 +1,38 @@
+---
+import { ViewTransitions } from "astro:transitions";
+import { getPokemons } from "../../utils/fetch";
+import  type { Pokemon } from "../../utils/types"
+
+export async function getStaticPaths(){
+  const pokemons: Pokemon[] = await getPokemons();
+
+  return pokemons.map((pokemon, index) => {
+    return {
+      params: { name: pokemon.name },
+      props: { pokemon, index }
+    }
+  })
+}
+
+const { name } = Astro.params;
+const { pokemon, index } = Astro.props;
+
+export const prerender = true
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <ViewTransitions />
+  <title>{name}</title>
+  <p>{name}</p>
+</head>
+<body>
+  <div class="doc">
+    <h1>{pokemon.name}</h1>
+    <img transition:name={name} src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${1 + index}.png`} alt={name}>
+  </div>
+</body>
+</html>
